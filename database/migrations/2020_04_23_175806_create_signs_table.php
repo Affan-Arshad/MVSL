@@ -15,7 +15,9 @@ class CreateSignsTable extends Migration
     {
         Schema::create('signs', function (Blueprint $table) {
             $table->id();
-            $table->text('video_url');
+            $table->text('video');
+            $table->text('explanation');
+            $table->text('explanation_video');
             $table->timestamps();
         });
     }

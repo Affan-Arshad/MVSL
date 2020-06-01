@@ -4,9 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Sign;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SignController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +25,8 @@ class SignController extends Controller
      */
     public function index()
     {
-        //
+        $signs = Sign::all();
+        return view('signs.index', compact('signs'));
     }
 
     /**
@@ -24,7 +36,7 @@ class SignController extends Controller
      */
     public function create()
     {
-        //
+        return view('signs.create');
     }
 
     /**
@@ -35,7 +47,29 @@ class SignController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate Request Data
+
+        // Store Videos to Storage
+        $video = '';
+        $explanation_video = '';
+        if($request->has('video')) {
+            $video = $request->video->store('public/signs');
+        }
+        if($request->has('explanation_video')) {
+            $explanation_video = $request->explanation_video->store('public/signs');
+        }
+
+        // Save Sign
+        $sign = new Sign();
+        $sign->video = $video;
+        $sign->explanation = $request->explanation;
+        $sign->explanation_video = $explanation_video;
+        $sign->save();
+
+        // Attach Tags to Sign
+        $sign->attachTags($request->meaning);
+
+        return redirect()->back();
     }
 
     /**
