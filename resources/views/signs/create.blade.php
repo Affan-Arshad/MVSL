@@ -9,34 +9,42 @@
 
                 <div class="card-body">
                     @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
                     @endif
 
                     <form action="{{ route('signs.store') }}" method="POST" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="card-block">
-                            
+
                             <div class="form-group">
-                                <label >Video</label>
-                                <input type="file" class="form-control" placeholder="Upload Video" name="video" required>
+                                <label>Video</label>
+                                <input type="file" class="form-control" placeholder="Upload Video" name="video"
+                                       required>
                             </div>
-                            
+
                             <div class="form-group">
-                                <label >Meaning</label><br>
+                                <label>Meaning</label><br>
                                 <select class="select2-meaning form-control" name="meaning[]" multiple>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label >Explanation</label>
+                                <label>Category</label><br>
+                                <select class="select2-category form-control" name="category[]" multiple>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Explanation</label>
                                 <textarea class="form-control" name="explanation"></textarea>
                             </div>
 
                             <div class="form-group">
-                                <label >Explanation Video</label>
-                                <input type="file" class="form-control" placeholder="Upload Explanation Video" name="explanation_video">
+                                <label>Explanation Video</label>
+                                <input type="file" class="form-control" placeholder="Upload Explanation Video"
+                                       name="explanation_video">
                             </div>
 
                             <div class="form-group">
@@ -58,9 +66,12 @@
 @section('additional_js')
 <script src="/js/select2.min.js"></script>
 <script>
-// In your Javascript (external .js resource or <script> tag)
+    // In your Javascript (external .js resource or <script> tag)
 $(document).ready(function() {
     $('.select2-meaning').select2({
+        tags: true
+    });
+    $('.select2-category').select2({
         tags: true
     });
 });

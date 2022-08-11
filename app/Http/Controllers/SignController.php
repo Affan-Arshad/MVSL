@@ -5,16 +5,15 @@ namespace App\Http\Controllers;
 use App\Sign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Tags\Tag;
 
-class SignController extends Controller
-{
+class SignController extends Controller {
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('auth');
     }
 
@@ -23,10 +22,15 @@ class SignController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $signs = Sign::all();
-        return view('signs.index', compact('signs'));
+    public function index(Request $request) {
+        if ($request->cat) {
+            $signsWithCat = Sign::with('tags')->withAnyTags([$request->cat], 'category')->get();
+            dd($signsWithCat);
+        } else {
+            $tags = Tag::withType('meaning')->orderBy('name')->get()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE);
+        }
+        $tagCats = Tag::withType('category')->pluck('name');
+        return view('signs.index', compact('tags', 'tagCats'));
     }
 
     /**
@@ -34,8 +38,7 @@ class SignController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         return view('signs.create');
     }
 
@@ -45,17 +48,16 @@ class SignController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         // Validate Request Data
 
         // Store Videos to Storage
         $video = '';
         $explanation_video = '';
-        if($request->has('video')) {
+        if ($request->has('video')) {
             $video = $request->video->store('public/signs');
         }
-        if($request->has('explanation_video')) {
+        if ($request->has('explanation_video')) {
             $explanation_video = $request->explanation_video->store('public/signs');
         }
 
@@ -66,8 +68,11 @@ class SignController extends Controller
         $sign->explanation_video = $explanation_video;
         $sign->save();
 
-        // Attach Tags to Sign
-        $sign->attachTags($request->meaning);
+        // Attach Meaning Tags to Sign
+        $sign->syncTagsWithType($request->meaning, 'meaning');
+
+        // Attach Category Tags to Sign
+        $sign->syncTagsWithType($request->category, 'category');
 
         return redirect()->back();
     }
@@ -78,8 +83,7 @@ class SignController extends Controller
      * @param  \App\Sign  $sign
      * @return \Illuminate\Http\Response
      */
-    public function show(Sign $sign)
-    {
+    public function show(Sign $sign) {
         //
     }
 
@@ -89,8 +93,7 @@ class SignController extends Controller
      * @param  \App\Sign  $sign
      * @return \Illuminate\Http\Response
      */
-    public function edit(Sign $sign)
-    {
+    public function edit(Sign $sign) {
         //
     }
 
@@ -101,8 +104,7 @@ class SignController extends Controller
      * @param  \App\Sign  $sign
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Sign $sign)
-    {
+    public function update(Request $request, Sign $sign) {
         //
     }
 
@@ -112,8 +114,7 @@ class SignController extends Controller
      * @param  \App\Sign  $sign
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Sign $sign)
-    {
+    public function destroy(Sign $sign) {
         //
     }
 }

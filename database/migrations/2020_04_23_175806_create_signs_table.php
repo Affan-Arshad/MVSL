@@ -4,20 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSignsTable extends Migration
-{
+class CreateSignsTable extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('signs', function (Blueprint $table) {
             $table->id();
             $table->text('video');
-            $table->text('explanation');
-            $table->text('explanation_video');
+            $table->text('explanation')->nullable();
+            $table->text('explanation_video')->nullable();
             $table->timestamps();
         });
     }
@@ -27,8 +25,7 @@ class CreateSignsTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('signs');
     }
 }
