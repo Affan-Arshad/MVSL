@@ -19,9 +19,13 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'PageController@home')->name('home');
-Route::get('/about', 'PageController@about')->name('about');
-Route::get('/services', 'PageController@services')->name('services');
-Route::get('/contact', 'PageController@contact')->name('contact');
+// Route::get('/home', 'PageController@home')->name('home');
+// Route::get('/about', 'PageController@about')->name('about');
+// Route::get('/services', 'PageController@services')->name('services');
+// Route::get('/contact', 'PageController@contact')->name('contact');
 
 Route::resource('signs', 'SignController');
+
+Route::get('/{page}', 'PageController')
+    ->name('page')
+    ->where('page', 'home|about|services|contact');

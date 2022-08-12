@@ -12,22 +12,30 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}">{{ __('Home') }}</a>
+                    <a class="nav-link {{ request()->is('home') ? 'active' : '' }}"
+                       href="{{ route('page', 'home') }}">{{
+                        __('Home') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('about') }}">{{ __('About') }}</a>
+                    <a class="nav-link {{ request()->is('about') ? 'active' : '' }}"
+                       href="{{ route('page', 'about') }}">{{
+                        __('About') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('services') }}">{{ __('Services') }}</a>
+                    <a class="nav-link {{ request()->is('services') ? 'active' : '' }}"
+                       href="{{ route('page', 'services') }}">{{
+                        __('Services') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('contact') }}">{{ __('Contact') }}</a>
+                    <a class="nav-link {{ request()->is('contact') ? 'active' : '' }}"
+                       href="{{ route('page', 'contact') }}">{{
+                        __('Contact') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/signs">{{ __('Signs') }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/signs/create">{{ __('Create Sign') }}</a>
+                    <a class="nav-link {{ request()->is('signs*') ? 'active' : '' }}"
+                       href="{{ route('signs.index') }}">{{
+                        __('Signs')
+                        }}</a>
                 </li>
             </ul>
 
@@ -53,9 +61,6 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{{ route('signs.create') }}">
                             {{ __('Add Sign') }}
-                        </a>
-                        <a class="dropdown-item" href="{{ route('signs.index') }}">
-                            {{ __('All Signs') }}
                         </a>
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                                 document.getElementById('logout-form').submit();">
