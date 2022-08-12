@@ -17,12 +17,7 @@ Route::get('/', function () {
     return redirect('/home');
 });
 
-Auth::routes();
-
-// Route::get('/home', 'PageController@home')->name('home');
-// Route::get('/about', 'PageController@about')->name('about');
-// Route::get('/services', 'PageController@services')->name('services');
-// Route::get('/contact', 'PageController@contact')->name('contact');
+Auth::routes(['register' => false]);
 
 Route::resource('signs', 'SignController');
 
