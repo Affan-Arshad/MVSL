@@ -1,11 +1,22 @@
 @import url(https://fonts.googleapis.com/css?family=Nunito);.masthead {
-    height: 100vh;
-    min-height: 500px;
-    background-image: url('https://source.unsplash.com/BtbjCFUvBXs/1920x1080');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }@charset "UTF-8";
+  min-height: calc(100vh - 56px);
+  /* background-image: url('https://source.unsplash.com/BtbjCFUvBXs/1920x1080');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; */
+}
+
+.page-center {
+  height: calc(100vh - 56px);
+}
+
+#app>main {
+  background: linear-gradient(148deg, #e1e2da 50%, #ecede8 50%);
+}
+
+.card {
+  box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%);
+}@charset "UTF-8";
 
 /*!
  * Bootstrap v4.4.1 (https://getbootstrap.com/)

@@ -28,7 +28,9 @@
         @include('partials.nav')
 
         <main style="margin-top: 56px;">
-            @yield('content')
+            <header class="masthead">
+                @yield('content')
+            </header>
         </main>
     </div>
 

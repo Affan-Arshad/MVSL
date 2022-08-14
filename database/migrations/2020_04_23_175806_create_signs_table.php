@@ -15,7 +15,6 @@ class CreateSignsTable extends Migration {
             $table->id();
             $table->text('video');
             $table->text('explanation')->nullable();
-            $table->text('explanation_video')->nullable();
             $table->timestamps();
         });
     }

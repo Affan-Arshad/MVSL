@@ -14,7 +14,7 @@
                     </div>
                     @endif
 
-                    <form action="{{ route('signs.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.signs.store') }}" method="POST" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="card-block">
 
@@ -42,12 +42,6 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Explanation Video</label>
-                                <input type="file" class="form-control" placeholder="Upload Explanation Video"
-                                       name="explanation_video">
-                            </div>
-
-                            <div class="form-group">
                                 <button type="submit" class="btn btn-success">Add</button>
                             </div>
 
@@ -69,10 +63,15 @@
     // In your Javascript (external .js resource or <script> tag)
 $(document).ready(function() {
     $('.select2-meaning').select2({
-        tags: true
+        tags: true,
+        data: @json($meaningsData),
+        // minimumInputLength: 1
     });
+
     $('.select2-category').select2({
-        tags: true
+        tags: true,
+        data: @json($categoriesData),
+        // minimumInputLength: 1
     });
 });
 </script>

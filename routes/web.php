@@ -14,13 +14,32 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect('/home');
+    return redirect('/search');
+});
+Route::get('/home', function () {
+    return redirect('/search');
 });
 
 Auth::routes(['register' => false]);
 
 Route::resource('signs', 'SignController');
 
+Route::get('/search', function() {
+    return view('search');
+})->name('search');
+
+Route::middleware(['role:Editor|Super-Admin'])
+->namespace('Admin')
+->prefix('admin')
+->name('admin.')
+->group(function() {
+    Route::resources([
+        'signs' => 'SignController',
+        'users' => 'SignController',
+        'roles' => 'SignController'
+    ]);
+});
+
 Route::get('/{page}', 'PageController')
-    ->name('page')
-    ->where('page', 'home|about|services|contact');
+->name('page')
+->where('page', 'about|services|contact');

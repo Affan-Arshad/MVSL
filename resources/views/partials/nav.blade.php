@@ -12,11 +12,6 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('home') ? 'active' : '' }}"
-                       href="{{ route('page', 'home') }}">{{
-                        __('Home') }}</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link {{ request()->is('about') ? 'active' : '' }}"
                        href="{{ route('page', 'about') }}">{{
                         __('About') }}</a>
@@ -32,9 +27,8 @@
                         __('Contact') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('signs*') ? 'active' : '' }}"
-                       href="{{ route('signs.index') }}">{{
-                        __('Signs')
+                    <a class="nav-link {{ request()->is('search') ? 'active' : '' }}" href="{{ route('search') }}">{{
+                        __('Search Sign')
                         }}</a>
                 </li>
             </ul>
@@ -43,14 +37,21 @@
             <ul class="navbar-nav ml-auto">
                 <!-- Authentication Links -->
                 @guest
+
+                {{-- Login Link --}}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                 </li>
+                {{-- Login Link --}}
+
+                {{-- Registration Link --}}
                 {{-- @if (Route::has('register'))
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                 </li>
                 @endif --}}
+                {{-- Registration Link --}}
+
                 @else
                 <li class="nav-item dropdown">
                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
@@ -58,10 +59,36 @@
                         {{ Auth::user()->name }} <span class="caret"></span>
                     </a>
 
+                    {{-- DEBUG --}}
+                    {{-- @foreach (Auth::user()->roles as $role)
+                    {{ $role->name }} ->
+                    @foreach ($role->permissions as $perm)
+                    {{ $perm->name }} |
+                    @endforeach
+                    <br>
+                    @endforeach
+                    {{ Auth::user()->hasRole('Super-Admin') }} --}}
+
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ route('signs.create') }}">
-                            {{ __('Add Sign') }}
+
+                        @canany(['create_signs', 'edit_signs', 'delete_signs'])
+                        <a class="dropdown-item" href="{{ route('admin.signs.index') }}">
+                            {{ __('Manage Signs') }}
                         </a>
+                        @endcanany
+
+                        @canany(['create_users', 'edit_users', 'delete_users'])
+                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">
+                            {{ __('Manage Users') }}
+                        </a>
+                        @endcanany
+
+                        @canany(['create_roles', 'edit_roles', 'delete_roles'])
+                        <a class="dropdown-item" href="{{ route('admin.roles.index') }}">
+                            {{ __('Manage Roles') }}
+                        </a>
+                        @endcanany
+
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                                 document.getElementById('logout-form').submit();">
                             {{ __('Logout') }}

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Sign;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Spatie\Tags\Tag;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class SignController extends Controller {
     /**
@@ -14,7 +15,7 @@ class SignController extends Controller {
      * @return void
      */
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['role:Editor|Super-Admin']);
     }
 
     /**
@@ -23,20 +24,8 @@ class SignController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request) {
-        $meanings = Tag::withType('meaning')->orderBy('name')->where('name', 'LIKE', '%' . $request->q . '%')->get()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE);
-        $query = Sign::withAnyTags($meanings, 'meaning');
-
-        if($request->q) {
-            $title = "Search results for: '" . $request->q . "'";
-        } else if($request->cat) {
-            $title = "Category: " . $request->cat;
-            $query->withAllTags([$request->cat], 'category');
-        } else {
-            $title = "Browse Signs";
-        }
-        $signs = $query->get();
-
-        return view('signs.index', compact('signs', 'title'));
+        $signs = Sign::get();
+        return view('admin.signs.index', compact('signs'));
     }
 
     /**
@@ -45,7 +34,16 @@ class SignController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create() {
-        return view('signs.create');
+        $categories = Tag::getWithType('category')->toArray();
+        $categoriesData = array_map(function($cat) {
+            return (object) array('id' => $cat['name']['en'], 'text' => $cat['name']['en']);
+        }, $categories);
+
+        $meanings = Tag::getWithType('meaning')->toArray();
+        $meaningsData = array_map(function($cat) {
+            return (object) array('id' => $cat['name']['en'], 'text' => $cat['name']['en']);
+        }, $meanings);
+        return view('admin.signs.create', compact('categoriesData', 'meaningsData'));
     }
 
     /**
@@ -59,19 +57,19 @@ class SignController extends Controller {
 
         // Store Videos to Storage
         $video = '';
-        $explanation_video = '';
+        // $explanation_video = '';
         if ($request->has('video')) {
             $video = $request->video->store('public/signs');
         }
-        if ($request->has('explanation_video')) {
-            $explanation_video = $request->explanation_video->store('public/signs');
-        }
+        // if ($request->has('explanation_video')) {
+        //     $explanation_video = $request->explanation_video->store('public/signs');
+        // }
 
         // Save Sign
         $sign = new Sign();
         $sign->video = $video;
         $sign->explanation = $request->explanation;
-        $sign->explanation_video = $explanation_video;
+        // $sign->explanation_video = $explanation_video;
         $sign->save();
 
         // Attach Meaning Tags to Sign
@@ -90,8 +88,9 @@ class SignController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show(Sign $sign) {
-        $related = Sign::withAnyTags($sign->tags)->where('id', '!=', $sign->id)->get();
-        return view('signs.show', compact('sign', 'related'));
+        // $sign = $sign::with('tags')->first();
+        // dd($sign->tagsWithType('meaning'));
+        return view('admin.signs.show', compact('sign'));
     }
 
     /**
