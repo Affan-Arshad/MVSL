@@ -35,10 +35,14 @@
                                 </td>
                                 <td>
                                     @foreach ($sign->tagsWithType('category') as $category)
-                                    {{ $category->name }} {{ (!$loop->last ? ' | ' : '') }}
+                                    <a target="_blank" href="{{ route('signs.index', ['cat' => $category->name]) }}">{{
+                                        $category->name }}</a>
+                                    {{(!$loop->last ? ', ' : '') }}
                                     @endforeach
                                 </td>
-                                <td></td>
+                                <td>
+                                    <a href="{{ route('admin.signs.edit', $sign->id) }}">Edit</a>
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>

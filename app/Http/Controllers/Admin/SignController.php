@@ -35,12 +35,12 @@ class SignController extends Controller {
      */
     public function create() {
         $categories = Tag::getWithType('category')->toArray();
-        $categoriesData = array_map(function($cat) {
+        $categoriesData = array_map(function ($cat) {
             return (object) array('id' => $cat['name']['en'], 'text' => $cat['name']['en']);
         }, $categories);
 
         $meanings = Tag::getWithType('meaning')->toArray();
-        $meaningsData = array_map(function($cat) {
+        $meaningsData = array_map(function ($cat) {
             return (object) array('id' => $cat['name']['en'], 'text' => $cat['name']['en']);
         }, $meanings);
         return view('admin.signs.create', compact('categoriesData', 'meaningsData'));
@@ -78,7 +78,7 @@ class SignController extends Controller {
         // Attach Category Tags to Sign
         $sign->syncTagsWithType($request->category, 'category');
 
-        return redirect()->back();
+        return redirect()->route('admin.signs.index');
     }
 
     /**
@@ -100,7 +100,24 @@ class SignController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Sign $sign) {
-        //
+        $categories = Tag::getWithType('category')->toArray();
+        $categoriesData = array_map(function ($cat) use ($sign) {
+            return (object) array(
+                'id' => $cat['name']['en'],
+                'text' => $cat['name']['en'],
+                'selected' => Sign::withAllTags([$cat['name']['en']], 'category')->get()->contains($sign)
+            );
+        }, $categories);
+
+        $meanings = Tag::getWithType('meaning')->toArray();
+        $meaningsData = array_map(function ($cat) use ($sign) {
+            return (object) array(
+                'id' => $cat['name']['en'],
+                'text' => $cat['name']['en'],
+                'selected' => Sign::withAllTags([$cat['name']['en']], 'meaning')->get()->contains($sign)
+            );
+        }, $meanings);
+        return view('admin.signs.create', compact('categoriesData', 'meaningsData', 'sign'));
     }
 
     /**
@@ -111,7 +128,30 @@ class SignController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Sign $sign) {
-        //
+        // Store Videos to Storage
+        if ($request->has('video')) {
+
+            $video = $request->video->store('public/signs');
+            $oldVideo = $sign->video;
+            $sign->video = $video;
+
+            if ($oldVideo != '') {
+                // TODO: Remove Old Video from storage
+
+            }
+        }
+
+        // Save Sign
+        $sign->explanation = $request->explanation;
+        $sign->save();
+
+        // Attach Meaning Tags to Sign
+        $sign->syncTagsWithType($request->meaning, 'meaning');
+
+        // Attach Category Tags to Sign
+        $sign->syncTagsWithType($request->category, 'category');
+
+        return redirect()->route('admin.signs.index');
     }
 
     /**
@@ -122,5 +162,7 @@ class SignController extends Controller {
      */
     public function destroy(Sign $sign) {
         //
+        $sign->delete();
+        return redirect()->route('admin.signs.index');
     }
 }
