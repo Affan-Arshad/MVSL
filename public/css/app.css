@@ -45,7 +45,39 @@
 
 #deleteForm {
   display: none;
-}@charset "UTF-8";
+}
+
+.user-select-none {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+/* peakable passwords */
+
+.peakableWrapper {
+  position: relative;
+}
+
+.peakableWrapper>img {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  -webkit-user-drag: none;
+}
+
+.passwordHidden>img {
+  opacity: 0.5;
+}
+
+.peakableWrapper>input {
+  padding-right: 40px;
+}
+
+/* end peakable passwords */@charset "UTF-8";
 
 /*!
  * Bootstrap v4.4.1 (https://getbootstrap.com/)

@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder {
      */
     public function run() {
         // $this->call(UserSeeder::class);
-        
+
         // Create Permissions
         // Signs
         $create_signs = Permission::create(['name' => 'create_signs']);
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder {
         ]);
         Role::create(['name' => 'Super-Admin']);
         $su->assignRole('Super-Admin');
-        
+
         // Verified User
         $vu = User::create([
             'name' => 'User',
@@ -70,6 +70,6 @@ class DatabaseSeeder extends Seeder {
         $editor->givePermissionTo($create_users);
         $editor->givePermissionTo($view_users);
         $eu->assignRole('Editor');
-
+        $eu->assignRole('Verified User');
     }
 }

@@ -29,6 +29,9 @@
 
         <main style="margin-top: 56px;">
             <header class="masthead">
+
+                @include('partials.flash-messages')
+
                 @yield('content')
             </header>
         </main>
