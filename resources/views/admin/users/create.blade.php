@@ -33,7 +33,7 @@
                         <div class="card-block">
 
                             <div class="form-group">
-                                <label>Username</label><br>
+                                <label>Name</label><br>
                                 <input value="{{ old('name', isset($user) ? $user->name : '') }}" name="name"
                                        type="text" class="form-control" {{ isset($user) ? 'disabled' : '' }} required />
                             </div>

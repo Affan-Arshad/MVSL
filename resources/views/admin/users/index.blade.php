@@ -14,7 +14,7 @@
                     <table class="table m-0 border">
                         <thead>
                             <tr>
-                                <th>Username</th>
+                                <th>Name</th>
                                 <th>Email</th>
                                 <th>Roles</th>
                                 <th>Actions</th>

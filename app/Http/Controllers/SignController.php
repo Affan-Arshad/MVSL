@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Sign;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Spatie\Tags\Tag;
 
 class SignController extends Controller {
@@ -26,9 +25,9 @@ class SignController extends Controller {
         $meanings = Tag::withType('meaning')->orderBy('name')->where('name', 'LIKE', '%' . $request->q . '%')->get()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE);
         $query = Sign::withAnyTags($meanings, 'meaning');
 
-        if($request->q) {
+        if ($request->q) {
             $title = "Search results for: '" . $request->q . "'";
-        } else if($request->cat) {
+        } else if ($request->cat) {
             $title = "Category: " . $request->cat;
             $query->withAllTags([$request->cat], 'category');
         } else {

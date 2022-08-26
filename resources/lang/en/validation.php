@@ -133,6 +133,13 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'roles.*' => [
+            'in' => 'Invalid role',
+            'not_in' => 'Invalid role',
+        ],
+        'permissions.*' => [
+            'in' => 'Invalid permission',
+        ],
     ],
 
     /*

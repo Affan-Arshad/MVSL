@@ -3,14 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\User;
-use Spatie\Tags\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UserController extends Controller {
     /**
@@ -51,8 +48,7 @@ class UserController extends Controller {
     public function store(Request $request) {
         $validatedData = $request->validate([
             // validate to see if roles are of the expected values
-            'roles' => 'required',
-            'roles.*' => Rule::in(['Editor', 'Verified User']),
+            'roles.*' => [Rule::in(Role::pluck('name')->toArray()), 'not_in:Super-Admin'],
 
             'name' => 'required',
             'email' => 'required|email|unique:users',
@@ -81,8 +77,10 @@ class UserController extends Controller {
      */
     public function edit(User $user) {
         // Super Admins should not be editable
-        if ($user->hasRole('Super-Admin')) return redirect('admin/users')
-            ->with('messages', ['Cannot update superadmin user!' => 'Warning']);
+        if ($user->hasRole('Super-Admin')) {
+            return redirect('admin/users')
+                ->with('messages', ['Cannot update superadmin user!' => 'warning']);
+        }
 
         $roles = Role::where('name', '!=', 'Super-Admin')->get();
 
@@ -100,16 +98,16 @@ class UserController extends Controller {
         // deny if trying to edit a super admin
         if ($user->hasRole('Super-Admin')) {
             return redirect()->route('admin.users.index')
-                ->with('messages', ['Cannot update superadmin user!' => 'Warning']);
+                ->with('messages', ['Cannot update superadmin user!' => 'warning']);
         }
 
         // validate to see if roles are of the expected values
         $validatedData = $request->validate([
-            'roles' => 'required',
-            'roles.*' => Rule::in(['Editor', 'Verified User']),
+            'roles.*' => [Rule::in(Role::pluck('name')->toArray()), 'not_in:Super-Admin']
         ]);
 
         // delete all previous roles and set the selected roles
+        if (!isset($validatedData['roles'])) $validatedData['roles'] = null;
         $user->syncRoles($validatedData['roles']);
         $user->save();
 

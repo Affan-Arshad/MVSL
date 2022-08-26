@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller {
     /**
@@ -31,136 +33,98 @@ class RoleController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    // public function create() {
-    //     $categories = Tag::getWithType('category')->toArray();
-    //     $categoriesData = array_map(function ($cat) {
-    //         return (object) array('id' => $cat['name']['en'], 'text' => $cat['name']['en']);
-    //     }, $categories);
+    public function create() {
+        $permissions = Permission::get()->groupBy('group');
+        return view('admin.roles.create', compact('permissions'));
+    }
 
-    //     $meanings = Tag::getWithType('meaning')->toArray();
-    //     $meaningsData = array_map(function ($cat) {
-    //         return (object) array('id' => $cat['name']['en'], 'text' => $cat['name']['en']);
-    //     }, $meanings);
-    //     return view('admin.signs.create', compact('categoriesData', 'meaningsData'));
-    // }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request) {
+        // Validate Request Data
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'permissions.*' => Rule::in(Permission::pluck('name')->toArray())
+        ]);
 
-    // /**
-    //  * Store a newly created resource in storage.
-    //  *
-    //  * @param  \Illuminate\Http\Request  $request
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function store(Request $request) {
-    //     // Validate Request Data
+        $role = Role::create(['name' => $validatedData['name']]);
 
-    //     // Store Videos to Storage
-    //     $video = '';
-    //     // $explanation_video = '';
-    //     if ($request->has('video')) {
-    //         $video = $request->video->store('public/signs');
-    //     }
-    //     // if ($request->has('explanation_video')) {
-    //     //     $explanation_video = $request->explanation_video->store('public/signs');
-    //     // }
+        if (!isset($validatedData['permissions'])) $validatedData['permissions'] = null;
+        $role->syncPermissions($validatedData['permissions']);
+        $role->save();
 
-    //     // Save Sign
-    //     $sign = new Sign();
-    //     $sign->video = $video;
-    //     $sign->explanation = $request->explanation;
-    //     // $sign->explanation_video = $explanation_video;
-    //     $sign->save();
+        return redirect()->route('admin.roles.index')->with('messages', ['Role created.' => 'success']);
+    }
 
-    //     // Attach Meaning Tags to Sign
-    //     $sign->syncTagsWithType($request->meaning, 'meaning');
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Role $role
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Role $role) {
+        // Super Admins should not be editable
+        if ($role->name == 'Super-Admin') {
+            return redirect()->route('admin.roles.index')
+                ->with('messages', ['Cannot update superadmin role!' => 'warning']);
+        }
 
-    //     // Attach Category Tags to Sign
-    //     $sign->syncTagsWithType($request->category, 'category');
+        $permissions = Permission::get()->groupBy('group');
+        return view('admin.roles.create', compact('permissions', 'role'));
+    }
 
-    //     return redirect()->route('admin.signs.index');
-    // }
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Role  $role
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Role $role) {
+        // Super Admins should not be editable
+        if ($role->name == 'Super-Admin') {
+            return redirect()->route('admin.roles.index')
+                ->with('messages', ['Cannot update superadmin role!' => 'warning']);
+        }
 
-    // /**
-    //  * Display the specified resource.
-    //  *
-    //  * @param  \App\Sign  $sign
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function show(Sign $sign) {
-    //     // $sign = $sign::with('tags')->first();
-    //     // dd($sign->tagsWithType('meaning'));
-    //     return view('admin.signs.show', compact('sign'));
-    // }
+        // Validate Request Data
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'permissions.*' => Rule::in(Permission::pluck('name')->toArray())
+        ]);
 
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  *
-    //  * @param  \App\Sign  $sign
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function edit(Sign $sign) {
-    //     $categories = Tag::getWithType('category')->toArray();
-    //     $categoriesData = array_map(function ($cat) use ($sign) {
-    //         return (object) array(
-    //             'id' => $cat['name']['en'],
-    //             'text' => $cat['name']['en'],
-    //             'selected' => Sign::withAllTags([$cat['name']['en']], 'category')->get()->contains($sign)
-    //         );
-    //     }, $categories);
+        if (!isset($validatedData['permissions'])) $validatedData['permissions'] = null;
+        $role->syncPermissions($validatedData['permissions']);
+        $role->save();
 
-    //     $meanings = Tag::getWithType('meaning')->toArray();
-    //     $meaningsData = array_map(function ($cat) use ($sign) {
-    //         return (object) array(
-    //             'id' => $cat['name']['en'],
-    //             'text' => $cat['name']['en'],
-    //             'selected' => Sign::withAllTags([$cat['name']['en']], 'meaning')->get()->contains($sign)
-    //         );
-    //     }, $meanings);
-    //     return view('admin.signs.create', compact('categoriesData', 'meaningsData', 'sign'));
-    // }
+        return redirect()->route('admin.roles.index')->with('messages', ['Role updated.' => 'success']);
+    }
 
-    // /**
-    //  * Update the specified resource in storage.
-    //  *
-    //  * @param  \Illuminate\Http\Request  $request
-    //  * @param  \App\Sign  $sign
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function update(Request $request, Sign $sign) {
-    //     // Store Videos to Storage
-    //     if ($request->has('video')) {
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Role  $role
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Role $role) {
+        // Super Admins should not be editable
+        if ($role->name == 'Super-Admin') {
+            return redirect()->route('admin.roles.index')
+                ->with('messages', ['Cannot delete superadmin role!' => 'warning']);
+        }
 
-    //         $video = $request->video->store('public/signs');
-    //         $oldVideo = $sign->video;
-    //         $sign->video = $video;
+        // Cannot delete role with users
+        if ($role->users()->count()) {
+            return redirect()->route('admin.roles.index')
+                ->with('messages', ['Cannot delete role with users!' => 'warning']);
+        }
 
-    //         if ($oldVideo != '') {
-    //             // TODO: Remove Old Video from storage
-
-    //         }
-    //     }
-
-    //     // Save Sign
-    //     $sign->explanation = $request->explanation;
-    //     $sign->save();
-
-    //     // Attach Meaning Tags to Sign
-    //     $sign->syncTagsWithType($request->meaning, 'meaning');
-
-    //     // Attach Category Tags to Sign
-    //     $sign->syncTagsWithType($request->category, 'category');
-
-    //     return redirect()->route('admin.signs.index');
-    // }
-
-    // /**
-    //  * Remove the specified resource from storage.
-    //  *
-    //  * @param  \App\Sign  $sign
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function destroy(Sign $sign) {
-    //     //
-    //     $sign->delete();
-    //     return redirect()->route('admin.signs.index');
-    // }
+        $role->delete();
+        return redirect()->route('admin.roles.index')
+            ->with('messages', [$role->name . ' Role deleted.' => 'success']);
+    }
 }
