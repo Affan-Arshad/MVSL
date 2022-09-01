@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +16,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    Session()->reflash();
     return redirect('/search');
 });
 Route::get('/home', function () {
+    Session()->reflash();
     return redirect('/search');
 });
 
@@ -39,6 +42,13 @@ Route::middleware(['role:Editor|Super-Admin'])
             'users' => 'UserController',
             'roles' => 'RoleController'
         ]);
+
+        Route::get('/changePassword', [UserController::class, 'changePasswordForm'])->name('changePasswordForm');
+        Route::post('/changePassword', [UserController::class, 'changePassword'])->name('changePassword');
+
+        Route::name('users.')->prefix('users')->group(function () {
+            Route::put('/{id}/toggleStatus', [UserController::class, 'toggleStatus'])->name('toggleStatus');
+        });
     });
 
 Route::get('/{page}', 'PageController')

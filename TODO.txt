@@ -1,5 +1,5 @@
-USERS
-- deactivate users
-
 SIGNS
 - delete unwanted videos after deleting sign
+
+PERMISSIONS
+- grant and revoke access accordingly

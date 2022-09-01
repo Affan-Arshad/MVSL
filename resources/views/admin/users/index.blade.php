@@ -16,6 +16,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Status</th>
                                 <th>Roles</th>
                                 <th>Actions</th>
                             </tr>
@@ -26,6 +27,7 @@
                             <tr>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
+                                <td>{{ $user->status ? 'Active' : 'Disabled' }}</td>
                                 <td>
                                     @foreach ($user->roles as $role)
                                     {{ $role->name }}
@@ -33,7 +35,8 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.users.edit', $user->id) }}">Edit roles</a>
+                                    <a class="btn btn-primary"
+                                       href="{{ route('admin.users.edit', $user->id) }}">Edit</a>
                                 </td>
                             </tr>
                             @endif

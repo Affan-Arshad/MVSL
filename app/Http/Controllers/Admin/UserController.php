@@ -115,13 +115,54 @@ class UserController extends Controller {
             ->with('messages', ['Updated user roles successfully' => 'success']);
     }
 
+    public function toggleStatus(Request $request, $id) {
+        // check if previous url parameter id and current id matches
+        $previousId = $this->prev_segments(url()->previous())[2];
+        if ($previousId != $id) return redirect()->back()->with('messages', ["Could not complete action. There was an error!" => "danger"]);
+
+        $user = User::findOrFail($id);
+        $user->status = !$user->status;
+        $user->save();
+
+        $messages = [];
+        if ($user->status) $messages['User activated'] = 'info';
+        else $messages['User disabled'] = 'danger';
+
+        return redirect()->back()->with('messages', $messages);
+    }
+
+    public function changePasswordForm() {
+        return view('admin.changePassword');
+    }
+
+    public function changePassword(Request $request) {
+
+        $request->validate([
+            'current_password' => ['required', function ($attribute, $value, $fail) {
+                if (!Hash::check($value, Auth()->user()->getAuthPassword())) {
+                    $fail('Incorrect Current Password');
+                };
+            }],
+            'new_password' => 'required|confirmed'
+        ]);
+
+        $user = User::find(Auth()->user()->id);
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return redirect()->back()->with('messages', ['Password changed (not really)' => 'success']);
+    }
+
     /**
-     * Remove the specified resource from storage.
+     * Get all of the segments for the previous uri.
      *
-     * @param  \App\Sign  $sign
-     * @return \Illuminate\Http\Response
+     * @return array
      */
-    public function destroy(User $user) {
-        //TODO: disable user
+    public function prev_segments($uri) {
+        $segments = explode('/', str_replace('' . url('') . '', '', $uri));
+
+        return array_values(array_filter($segments, function ($value) {
+            return $value !== '';
+        }));
     }
 }

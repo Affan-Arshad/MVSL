@@ -10,11 +10,12 @@
                     <h4 class="m-0">{{ isset($user) ? 'Edit User Roles' : 'Add User' }}</h4>
                     @if (isset($user))
 
-                    <a class="btn btn-danger text-white" href="#" onclick="handleDelete(event)">Deactivate
-                        User</a>
-                    <form id="deleteForm" action="{{ route('admin.users.destroy', $user->id) }}" method="POST">
+                    <a class="btn btn-{{ $user->status ? 'danger' : 'info' }} text-white" href="#"
+                       onclick="handleToggleStatus(event)">{{ $user->status ? 'Disable User' : 'Re-Activate User' }}</a>
+                    <form id="toggleStatusForm" action="{{ route('admin.users.toggleStatus', $user->id) }}"
+                          method="POST">
                         @csrf
-                        @method('DELETE')
+                        @method('PUT')
                     </form>
                     @endif
                 </div>
@@ -88,5 +89,15 @@
 <script type="module">
     import { makePeakable } from '/js/peakable.js'
     makePeakable('.peakable')
+</script>
+<script>
+    const handleToggleStatus = (e) => {
+        e.preventDefault();
+        const del = confirm('{{ $user->status ? "Disable" : "Re-Activate" }}' + " this user?");
+        if(del) {
+            const form = document.querySelector('#toggleStatusForm');
+            form.submit();
+        }
+    }
 </script>
 @endsection
