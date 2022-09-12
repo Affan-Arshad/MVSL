@@ -6,6 +6,7 @@ use App\Sign;
 use Spatie\Tags\Tag;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
 class SignController extends Controller {
@@ -78,6 +79,9 @@ class SignController extends Controller {
         // Attach Category Tags to Sign
         $sign->syncTagsWithType($request->category, 'category');
 
+
+        flashMessage('Sign created', 'success');
+
         return redirect()->route('admin.signs.index');
     }
 
@@ -136,8 +140,8 @@ class SignController extends Controller {
             $sign->video = $video;
 
             if ($oldVideo != '') {
-                // TODO: Remove Old Video from storage
-
+                Storage::delete($oldVideo);
+                flashMessage('Old file deleted', 'success');
             }
         }
 
@@ -151,6 +155,8 @@ class SignController extends Controller {
         // Attach Category Tags to Sign
         $sign->syncTagsWithType($request->category, 'category');
 
+        flashMessage('Sign updated', 'success');
+
         return redirect()->route('admin.signs.index');
     }
 
@@ -161,8 +167,10 @@ class SignController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy(Sign $sign) {
-        //
         $sign->delete();
+
+        flashMessage('Sign deleted', 'success');
+
         return redirect()->route('admin.signs.index');
     }
 }

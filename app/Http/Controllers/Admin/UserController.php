@@ -66,7 +66,9 @@ class UserController extends Controller {
         $user->syncRoles($validatedData['roles']);
         $user->save();
 
-        return redirect()->route('admin.users.index')->with('messages', ['User created.' => 'success']);
+        flashMessage('User created', 'success');
+
+        return redirect()->route('admin.users.index');
     }
 
     /**
@@ -78,8 +80,8 @@ class UserController extends Controller {
     public function edit(User $user) {
         // Super Admins should not be editable
         if ($user->hasRole('Super-Admin')) {
-            return redirect('admin/users')
-                ->with('messages', ['Cannot update superadmin user!' => 'warning']);
+            flashMessage('Cannot update superadmin user!', 'warning');
+            return redirect('admin/users');
         }
 
         $roles = Role::where('name', '!=', 'Super-Admin')->get();
@@ -97,8 +99,8 @@ class UserController extends Controller {
     public function update(Request $request, User $user) {
         // deny if trying to edit a super admin
         if ($user->hasRole('Super-Admin')) {
-            return redirect()->route('admin.users.index')
-                ->with('messages', ['Cannot update superadmin user!' => 'warning']);
+            flashMessage('Cannot update superadmin user!', 'warning');
+            return redirect()->route('admin.users.index');
         }
 
         // validate to see if roles are of the expected values
@@ -111,28 +113,32 @@ class UserController extends Controller {
         $user->syncRoles($validatedData['roles']);
         $user->save();
 
-        return redirect()->route('admin.users.index')
-            ->with('messages', ['Updated user roles successfully' => 'success']);
+        flashMessage('Updated user roles successfully', 'success');
+
+        return redirect()->route('admin.users.index');
     }
 
     public function toggleStatus(Request $request, $id) {
         // check if previous url parameter id and current id matches
         $previousId = $this->prev_segments(url()->previous())[2];
-        if ($previousId != $id) return redirect()->back()->with('messages', ["Could not complete action. There was an error!" => "danger"]);
+        if ($previousId != $id) {
+
+            flashMessage('Could not complete action. There was an error!', 'danger');
+            return redirect()->back();
+        }
 
         $user = User::findOrFail($id);
         $user->status = !$user->status;
         $user->save();
 
-        $messages = [];
-        if ($user->status) $messages['User activated'] = 'info';
-        else $messages['User disabled'] = 'danger';
+        if ($user->status) flashMessage('User activated', 'info');
+        else flashMessage('User disabled', 'danger');
 
-        return redirect()->back()->with('messages', $messages);
+        return redirect()->back();
     }
 
     public function changePasswordForm() {
-        return view('admin.changePassword');
+        return view('admin.users.changePassword');
     }
 
     public function changePassword(Request $request) {
@@ -150,7 +156,9 @@ class UserController extends Controller {
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        return redirect()->back()->with('messages', ['Password changed (not really)' => 'success']);
+        flashMessage('Password changed!', 'success');
+
+        return redirect()->back();
     }
 
     /**

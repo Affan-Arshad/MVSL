@@ -57,7 +57,9 @@ class RoleController extends Controller {
         $role->syncPermissions($validatedData['permissions']);
         $role->save();
 
-        return redirect()->route('admin.roles.index')->with('messages', ['Role created.' => 'success']);
+        flashMessage('Role created.', 'success');
+
+        return redirect()->route('admin.roles.index');
     }
 
     /**
@@ -69,8 +71,8 @@ class RoleController extends Controller {
     public function edit(Role $role) {
         // Super Admins should not be editable
         if ($role->name == 'Super-Admin') {
-            return redirect()->route('admin.roles.index')
-                ->with('messages', ['Cannot update superadmin role!' => 'warning']);
+            flashMessage('Cannot update superadmin role!', 'warning');
+            return redirect()->route('admin.roles.index');
         }
 
         $permissions = Permission::get()->groupBy('group');
@@ -87,8 +89,8 @@ class RoleController extends Controller {
     public function update(Request $request, Role $role) {
         // Super Admins should not be editable
         if ($role->name == 'Super-Admin') {
-            return redirect()->route('admin.roles.index')
-                ->with('messages', ['Cannot update superadmin role!' => 'warning']);
+            flashMessage('Cannot update superadmin role!', 'warning');
+            return redirect()->route('admin.roles.index');
         }
 
         // Validate Request Data
@@ -101,7 +103,9 @@ class RoleController extends Controller {
         $role->syncPermissions($validatedData['permissions']);
         $role->save();
 
-        return redirect()->route('admin.roles.index')->with('messages', ['Role updated.' => 'success']);
+        flashMessage('Role updated.', 'success');
+
+        return redirect()->route('admin.roles.index');
     }
 
     /**
@@ -113,18 +117,20 @@ class RoleController extends Controller {
     public function destroy(Role $role) {
         // Super Admins should not be editable
         if ($role->name == 'Super-Admin') {
-            return redirect()->route('admin.roles.index')
-                ->with('messages', ['Cannot delete superadmin role!' => 'warning']);
+            flashMessage('Cannot delete superadmin role!', 'warning');
+            return redirect()->route('admin.roles.index');
         }
 
         // Cannot delete role with users
         if ($role->users()->count()) {
-            return redirect()->route('admin.roles.index')
-                ->with('messages', ['Cannot delete role with users!' => 'warning']);
+            flashMessage('Cannot delete role with users!', 'warning');
+            return redirect()->route('admin.roles.index');
         }
 
         $role->delete();
-        return redirect()->route('admin.roles.index')
-            ->with('messages', [$role->name . ' Role deleted.' => 'success']);
+
+        flashMessage('Role deleted.', 'success');
+
+        return redirect()->route('admin.roles.index');
     }
 }

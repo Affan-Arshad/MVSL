@@ -21,7 +21,9 @@ class CheckDisabled {
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->with('messages', ['Your Account is disabled, please contact Admin.' => 'danger']);
+            flashMessage('Your Account is disabled, please contact Admin.', 'danger');
+
+            return redirect()->route('login');
         }
 
         return $next($request);
