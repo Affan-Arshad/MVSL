@@ -16,7 +16,6 @@ class SignController extends Controller {
      * @return void
      */
     public function __construct() {
-        $this->middleware(['role:Editor|Super-Admin']);
     }
 
     /**
@@ -83,18 +82,6 @@ class SignController extends Controller {
         flashMessage('Sign created', 'success');
 
         return redirect()->route('admin.signs.index');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Sign  $sign
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Sign $sign) {
-        // $sign = $sign::with('tags')->first();
-        // dd($sign->tagsWithType('meaning'));
-        return view('admin.signs.show', compact('sign'));
     }
 
     /**

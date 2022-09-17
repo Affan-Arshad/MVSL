@@ -7,7 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="m-0">Users</h4>
+
+                    @can('create_users')
                     <a class="btn btn-success text-white" href="{{ route('admin.users.create') }}">+ Add user</a>
+                    @endcan
                 </div>
 
                 <div class="card-body">
@@ -17,7 +20,7 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Status</th>
-                                <th>Roles</th>
+                                <th>Role</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -35,8 +38,10 @@
                                     @endforeach
                                 </td>
                                 <td>
+                                    @can('edit_users')
                                     <a class="btn btn-primary"
                                        href="{{ route('admin.users.edit', $user->id) }}">Edit</a>
+                                    @endcan
                                 </td>
                             </tr>
                             @endif

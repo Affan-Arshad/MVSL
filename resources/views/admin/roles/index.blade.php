@@ -7,7 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="m-0">Roles</h4>
+
+                    @can('create_roles')
                     <a class="btn btn-success text-white" href="{{ route('admin.roles.create') }}">+ Add role</a>
+                    @endcan
                 </div>
 
                 <div class="card-body">
@@ -25,7 +28,13 @@
                             <tr>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->users()->count() }}</td>
-                                <td><a href="{{ route('admin.roles.edit', $role->id) }}">Edit</a></td>
+                                <td>
+                                    @can('edit_roles')
+                                    @if ($role->name != "User")
+                                    <a href="{{ route('admin.roles.edit', $role->id) }}">Edit</a>
+                                    @endif
+                                    @endcan
+                                </td>
                             </tr>
                             @endif
                             @endforeach

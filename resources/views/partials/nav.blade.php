@@ -89,7 +89,7 @@
                         </a>
                         @endcanany
 
-                        <a class="dropdown-item" href="{{ route('admin.changePasswordForm') }}">
+                        <a class="dropdown-item" href="{{ route('changePasswordForm') }}">
                             {{ __('Change Password') }}
                         </a>
 

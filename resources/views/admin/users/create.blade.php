@@ -8,8 +8,9 @@
 
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="m-0">{{ isset($user) ? 'Edit User Roles' : 'Add User' }}</h4>
-                    @if (isset($user))
 
+                    @can('delete_users')
+                    @if (isset($user))
                     <a class="btn btn-{{ $user->status ? 'danger' : 'info' }} text-white" href="#"
                        onclick="handleToggleStatus(event)">{{ $user->status ? 'Disable User' : 'Re-Activate User' }}</a>
                     <form id="toggleStatusForm" action="{{ route('admin.users.toggleStatus', $user->id) }}"
@@ -18,6 +19,9 @@
                         @method('PUT')
                     </form>
                     @endif
+                    @endcan
+
+
                 </div>
 
                 <div class="card-body">
@@ -63,7 +67,7 @@
                                 <label>Roles</label><br>
                                 @foreach ($roles as $role)
                                 <label class="user-select-none">
-                                    <input value="{{ $role->name }}" type="checkbox" name="roles[]" {{ isset($user) &&
+                                    <input value="{{ $role->name }}" type="radio" name="role" {{ isset($user) &&
                                            $user->hasRole($role) ? 'checked' : '' }} />
                                     {{ $role->name }}
                                 </label>
@@ -91,6 +95,7 @@
     makePeakable('.peakable')
 </script>
 <script>
+    @if (isset($user))
     const handleToggleStatus = (e) => {
         e.preventDefault();
         const del = confirm('{{ $user->status ? "Disable" : "Re-Activate" }}' + " this user?");
@@ -99,5 +104,6 @@
             form.submit();
         }
     }
+    @endif
 </script>
 @endsection

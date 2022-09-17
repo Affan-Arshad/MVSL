@@ -15,7 +15,6 @@ class RoleController extends Controller {
      * @return void
      */
     public function __construct() {
-        $this->middleware(['role:Editor|Super-Admin']);
     }
 
     /**
@@ -47,7 +46,7 @@ class RoleController extends Controller {
     public function store(Request $request) {
         // Validate Request Data
         $validatedData = $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:roles',
             'permissions.*' => Rule::in(Permission::pluck('name')->toArray())
         ]);
 
@@ -70,8 +69,8 @@ class RoleController extends Controller {
      */
     public function edit(Role $role) {
         // Super Admins should not be editable
-        if ($role->name == 'Super-Admin') {
-            flashMessage('Cannot update superadmin role!', 'warning');
+        if ($role->name == 'Super-Admin' || $role->name == 'User') {
+            flashMessage('Cannot update this role!', 'warning');
             return redirect()->route('admin.roles.index');
         }
 
@@ -88,8 +87,8 @@ class RoleController extends Controller {
      */
     public function update(Request $request, Role $role) {
         // Super Admins should not be editable
-        if ($role->name == 'Super-Admin') {
-            flashMessage('Cannot update superadmin role!', 'warning');
+        if ($role->name == 'Super-Admin' || $role->name == 'User') {
+            flashMessage('Cannot update this role!', 'warning');
             return redirect()->route('admin.roles.index');
         }
 
@@ -116,8 +115,8 @@ class RoleController extends Controller {
      */
     public function destroy(Role $role) {
         // Super Admins should not be editable
-        if ($role->name == 'Super-Admin') {
-            flashMessage('Cannot delete superadmin role!', 'warning');
+        if ($role->name == 'Super-Admin' || $role->name == 'User') {
+            flashMessage('Cannot delete this role!', 'warning');
             return redirect()->route('admin.roles.index');
         }
 

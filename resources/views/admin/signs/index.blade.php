@@ -7,7 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="m-0">Signs</h4>
+
+                    @can('create_signs')
                     <a class="btn btn-success text-white" href="{{ route('admin.signs.create') }}">+ Add Sign</a>
+                    @endcan
                 </div>
 
                 <div class="card-body">
@@ -41,7 +44,9 @@
                                     @endforeach
                                 </td>
                                 <td>
+                                    @can('edit_signs')
                                     <a href="{{ route('admin.signs.edit', $sign->id) }}">Edit</a>
+                                    @endcan
                                 </td>
                             </tr>
                             @endforeach

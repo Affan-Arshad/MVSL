@@ -11,7 +11,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form action="{{ route('admin.changePassword') }}" method="POST">
+                    <form action="{{ route('changePassword') }}" method="POST">
                         @csrf
 
                         <div class="card-block">
