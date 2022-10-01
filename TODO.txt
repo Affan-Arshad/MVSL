@@ -1,2 +1,8 @@
-PERMISSIONS
-- grant and revoke access accordingly
+- Search by meaning tag
+- Change 'meaning' to 'word'
+- Selected Public Signs
+- For signs with multiple meanings: show also used for: x, y z...
+- For meanings with multiple signs: show tab for each sign on show page
+- Put a search bar on navigation bar
+- On search results: join same meaning with multiple signs
+- On search results: dont show joined meanings. eg: "market / shop"
