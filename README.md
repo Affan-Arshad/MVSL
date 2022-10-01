@@ -11,6 +11,7 @@ It basically shows words and how to sign them in MVSL (Maldivian Sign Language)
 **composer install**\
 **php artisan key:generate**\
 **php artisan migrate:fresh --seed**\
+**php artisan storage:link**\
 **php artisan serve**
 - go to the url **/login** of the app
 - login using:\
